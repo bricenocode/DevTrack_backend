@@ -1,8 +1,8 @@
 package com.devtrack.users.application.mapper.output;
 
-import com.example.User.domain.entity.UserEntity;
-import com.example.User.infraestructure.controller.dto.output.UserOutputLoginDto;
-import com.example.User.infraestructure.controller.dto.output.UserOutputSimpleDto;
+import com.devtrack.users.domain.entity.UserEntity;
+import com.devtrack.users.infraestructure.controller.dto.output.UserOutputLoginDto;
+import com.devtrack.users.infraestructure.controller.dto.output.UserOutputSimpleDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

@@ -1,8 +1,8 @@
 package com.devtrack.users.application.mapper.input;
 
-import com.example.User.domain.entity.UserEntity;
-import com.example.User.infraestructure.controller.dto.input.UserInputLoginDto;
-import com.example.User.infraestructure.controller.dto.input.UserInputSimpleDto;
+import com.devtrack.users.domain.entity.UserEntity;
+import com.devtrack.users.infraestructure.controller.dto.input.UserInputLoginDto;
+import com.devtrack.users.infraestructure.controller.dto.input.UserInputSimpleDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

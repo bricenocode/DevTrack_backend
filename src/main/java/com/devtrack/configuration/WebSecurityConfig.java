@@ -1,7 +1,7 @@
 package com.devtrack.configuration;
 
-import com.example.utils.AuthEntryPointJwt;
-import com.example.utils.CustomUserDetailsService;
+import com.devtrack.utils.AuthEntryPointJwt;
+import com.devtrack.utils.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,9 +21,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     @Autowired
-    private  CustomUserDetailsService customUserDetailsService;
+    private CustomUserDetailsService customUserDetailsService;
     @Autowired
-    private  AuthEntryPointJwt unauthorizedHandler;
+    private AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
