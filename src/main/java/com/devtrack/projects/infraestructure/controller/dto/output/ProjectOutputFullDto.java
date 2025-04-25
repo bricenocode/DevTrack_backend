@@ -18,7 +18,7 @@ public class ProjectOutputFullDto {
     private String projectName;
     private String clientName;
     private String description;
-    private List<TaskOutputSimpleDto> tasks;
     private UserOutputSimpleDto manager;
+    private List<TaskOutputSimpleDto> tasks;
     private List<UserOutputSimpleDto> team;
 }

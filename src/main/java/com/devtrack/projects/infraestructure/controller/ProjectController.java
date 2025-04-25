@@ -3,9 +3,13 @@ package com.devtrack.projects.infraestructure.controller;
 
 import com.devtrack.projects.application.ProjectService;
 import com.devtrack.projects.infraestructure.controller.dto.input.ProjectInputManagerDto;
+import com.devtrack.projects.infraestructure.controller.dto.input.ProjectInputSimpleDto;
 import com.devtrack.projects.infraestructure.controller.dto.output.ProjectOutputFullDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,16 +22,17 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping
-    ProjectOutputFullDto createProject(
+    ResponseEntity<String> createProject(
             @RequestBody
             @Valid
-            ProjectInputManagerDto projectInputManagerDto){
+            ProjectInputSimpleDto projectInputManagerDto){
         return projectService.createProject(projectInputManagerDto);
     }
     @GetMapping
     List<ProjectOutputFullDto> getAllProjects(){
         return projectService.getAllProjects();
     }
+    
     @GetMapping("/{projectId}")
     ProjectOutputFullDto getProjectById(
             @PathVariable
@@ -39,8 +44,8 @@ public class ProjectController {
             @PathVariable
             String projectId,
             @RequestBody
-            @Valid
             ProjectInputManagerDto projectInputManagerDto){
+        System.out.println(projectId);
         return projectService.updateProject(projectId, projectInputManagerDto);
     }
     @DeleteMapping("/{projectId}")

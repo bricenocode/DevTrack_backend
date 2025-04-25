@@ -6,6 +6,7 @@ import com.devtrack.projects.application.mapper.output.ProjectOutputMapper;
 import com.devtrack.projects.domain.entity.ProjectEntity;
 import com.devtrack.projects.domain.repository.ProjectRepository;
 import com.devtrack.projects.infraestructure.controller.dto.input.ProjectInputManagerDto;
+import com.devtrack.projects.infraestructure.controller.dto.input.ProjectInputSimpleDto;
 import com.devtrack.projects.infraestructure.controller.dto.output.ProjectOutputFullDto;
 import com.devtrack.tasks.domain.entity.TaskEntity;
 import com.devtrack.tasks.domain.repository.TaskRepository;
@@ -15,6 +16,9 @@ import com.devtrack.users.domain.entity.UserEntity;
 import com.devtrack.users.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -35,18 +39,19 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     @Override
-    public ProjectOutputFullDto createProject(ProjectInputManagerDto projectInputManagerDto) {
-
-        UserEntity manager = userRepository.findById(projectInputManagerDto.getManager())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    public ResponseEntity<String> createProject(ProjectInputSimpleDto projectInputSimpleDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserEntity manager = userRepository.findUserEntitiesByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         ProjectEntity project = new ProjectEntity();
         project.setManager(manager);
-        project.setClientName(projectInputManagerDto.getClientName());
-        project.setDescription(projectInputManagerDto.getDescription());
-        project.setProjectName(projectInputManagerDto.getProjectName());
-
-        return projectOutputMapper.entityToOutputFullDto(
-                projectRepository.save(project));
+        project.setClientName(projectInputSimpleDto.getClientName());
+        project.setDescription(projectInputSimpleDto.getDescription());
+        project.setProjectName(projectInputSimpleDto.getProjectName());
+        projectRepository.save(project);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Project created successfull");
     }
 
     private void ensureEmailIsUnique(String email) {
@@ -66,7 +71,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectOutputFullDto getProjectById(String id) {
+    public  ProjectOutputFullDto getProjectById(String id) {
         ProjectEntity projectEntity = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
         return projectOutputMapper.entityToOutputFullDto(projectEntity);
@@ -78,8 +83,11 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectEntity projectEntity = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        UserEntity manager = userRepository.findById(projectInputManagerDto.getManager())
+        if(projectInputManagerDto.getManager() != null){
+            UserEntity manager = userRepository.findUserEntitiesByEmail(projectInputManagerDto.getManager().getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Manager not found"));
+            projectEntity.setManager(manager);
+        }
 
         Optional.ofNullable(projectInputManagerDto.getProjectName())
                 .ifPresent(projectEntity::setProjectName);
@@ -89,7 +97,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .ifPresent(projectEntity::setDescription);
         Optional.ofNullable(projectInputManagerDto.getClientName())
                 .ifPresent(projectEntity::setClientName);
-        projectEntity.setManager(manager);
+        
 
         return projectOutputMapper.entityToOutputFullDto(
                 projectRepository.save(projectEntity)
