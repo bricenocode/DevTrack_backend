@@ -14,5 +14,4 @@ public class DevTrackBackendApplication {
         dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
         SpringApplication.run(DevTrackBackendApplication.class, args);
     }
-
 }
