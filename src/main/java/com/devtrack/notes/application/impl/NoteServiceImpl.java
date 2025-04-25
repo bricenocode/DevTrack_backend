@@ -16,7 +16,10 @@ import com.devtrack.users.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,7 +38,6 @@ public class NoteServiceImpl implements NoteService {
     public ResponseEntity<String> createNote(
             String projectId,
             String taskId,
-            String userId,
             NoteInputSimpleDto noteInputSimpleDto){
         ProjectEntity projectEntity = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException(
@@ -48,9 +50,10 @@ public class NoteServiceImpl implements NoteService {
                     "Task does not belong to project"
             );
         }
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException(
-                        "User with id " + userId + " not found"));;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         NoteEntity noteEntity = noteInputMapper.inputSimpleDtoToEntity(noteInputSimpleDto);
 
         noteEntity.setCreatedBy(userEntity);
@@ -86,32 +89,33 @@ public class NoteServiceImpl implements NoteService {
                         .toList());
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> deleteNote(
             String projectId,
             String taskId,
             String noteId) {
         ProjectEntity projectEntity = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Project not found"));
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
         TaskEntity taskEntity = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Task with id " + taskId + " not found"));
+                .orElseThrow(() -> new RuntimeException("Task with id " + taskId + " not found"));
+
         if (!taskEntity.getProject().get_id().equals(projectEntity.get_id())) {
-            throw new RuntimeException(
-                    "Task does not belong to project"
-            );
+            throw new RuntimeException("Task does not belong to project");
         }
+
         NoteEntity noteEntity = noteRepository.findById(noteId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Note with id " + noteId + " not found"));
-        if(!taskEntity.getNotes().contains(noteEntity)) {
-            throw new RuntimeException(
-                    "Task does not belong to note");
+                .orElseThrow(() -> new RuntimeException("Note with id " + noteId + " not found"));
+
+        if (!taskEntity.getNotes().contains(noteEntity)) {
+            throw new RuntimeException("Task does not belong to note");
         }
-        noteRepository.delete(noteEntity);
+
         taskEntity.getNotes().remove(noteEntity);
+        noteRepository.delete(noteEntity);
         taskRepository.save(taskEntity);
-        return  ResponseEntity.status(HttpStatus.OK).body("Note deleted!");
+        return ResponseEntity.status(HttpStatus.OK).body("Note deleted!");
     }
+
 }

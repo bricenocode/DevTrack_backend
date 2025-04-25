@@ -26,20 +26,18 @@ public class NoteController {
         return this.noteService.getTaskNotes(projectId, taskId);
     }
 
-    @PostMapping("/{projectId}/tasks/{taskId}/notes/{userId}")
+    @PostMapping("/{projectId}/tasks/{taskId}/notes")
     public ResponseEntity<String> createNote(
             @PathVariable
             String projectId,
             @PathVariable
             String taskId,
-            @PathVariable
-            String userId,
             @RequestBody
             NoteInputSimpleDto noteInputSimpleDto){
-        return this.noteService.createNote(projectId, taskId, userId, noteInputSimpleDto);
+        return this.noteService.createNote(projectId, taskId, noteInputSimpleDto);
     }
 
-    @DeleteMapping("/{projectId}d/tasks/:taskId/notes/")
+    @DeleteMapping("/{projectId}/tasks/{taskId}/notes/{noteId}")
     public ResponseEntity<String> deleteNote(
             @PathVariable
             String projectId,

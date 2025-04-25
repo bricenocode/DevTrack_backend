@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public interface NoteService {
-    ResponseEntity<String> createNote(String projectId,String taskId, String userId, NoteInputSimpleDto noteInputSimpleDto);
+    ResponseEntity<String> createNote(String projectId,String taskId, NoteInputSimpleDto noteInputSimpleDto);
     ResponseEntity<List<NoteOutputFullDto>> getTaskNotes(String projectId, String taskId);
     ResponseEntity<String> deleteNote(String projectId,String taskId,String noteId);
 }
