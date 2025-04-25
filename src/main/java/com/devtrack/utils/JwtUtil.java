@@ -25,6 +25,7 @@ public class JwtUtil {
     }
     // Generate JWT token with user email
     public String generateToken(String email) {
+        System.out.println(new Date((new Date()).getTime() + jwtExpirationMs));
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
