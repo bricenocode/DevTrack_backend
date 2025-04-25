@@ -1,7 +1,9 @@
 package com.devtrack.auth.infraestructure.controller;
 
 import com.devtrack.auth.application.TokenService;
+import com.devtrack.auth.infraestructure.controller.dto.input.TokenInputChangePasswordDto;
 import com.devtrack.auth.infraestructure.controller.dto.input.TokenInputNameDto;
+import com.devtrack.auth.infraestructure.controller.dto.input.TokenInputPasswordDto;
 import com.devtrack.users.application.mapper.input.UserInputMapper;
 import com.devtrack.users.infraestructure.controller.dto.input.UserInputLoginDto;
 import com.devtrack.users.infraestructure.controller.dto.input.UserInputSimpleDto;
@@ -63,25 +65,28 @@ public class TokenController {
         return tokenService.forgotPassword(email);
     }
 
-    @PostMapping("/validate-password")
+    @PostMapping("/check-password")
     public ResponseEntity<String> validatePassword(
             @RequestBody
-            TokenInputNameDto token
+            TokenInputPasswordDto tokenInputPasswordDto
     ){
-        return tokenService.validateToken(token.getToken());
+        return tokenService.validateToken(tokenInputPasswordDto.getPassword());
     }
 
     @PutMapping("/update-password")
     public ResponseEntity<String> updatePasswordWithToken(
             @RequestBody
-            String password,
-            @RequestBody
-            String passwordConfirmation
+            TokenInputChangePasswordDto tokenInputChangePasswordDto
+
     ){
-        if(!password.equals(passwordConfirmation)){
+        System.out.println(tokenInputChangePasswordDto.getCurrentPassword());
+        System.out.println(tokenInputChangePasswordDto.getPassword());
+        System.out.println(tokenInputChangePasswordDto.getPasswordConfirmation());
+        if(!tokenInputChangePasswordDto.getPassword()
+                .equals(tokenInputChangePasswordDto.getPasswordConfirmation())){
             throw new RuntimeException("Passwords do not match");
         }
-        return tokenService.updatePasswordWithToken(password);
+        return tokenService.updatePasswordWithToken(tokenInputChangePasswordDto.getPassword());
     }
 
     @GetMapping("/user")

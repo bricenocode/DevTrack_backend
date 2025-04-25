@@ -15,7 +15,7 @@ public interface TokenService {
     ResponseEntity<String> confirmAccount(String token);
     ResponseEntity<String> requestConfirmationCode(String email);
     ResponseEntity<String> forgotPassword(String email);
-    ResponseEntity<String> validateToken(String token);
+    ResponseEntity<String> validateToken(String password);
     ResponseEntity<String> updatePasswordWithToken(String newPassword);
     ResponseEntity<UserOutputSimpleDto> user();
 }

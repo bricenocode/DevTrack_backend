@@ -27,13 +27,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
-
 
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
@@ -55,7 +55,6 @@ public class TokenServiceImpl implements TokenService {
                 .ensureIndex(new Index().on("expiresAt", Sort.Direction.ASC).expire(0));
     }
 
-
     @Override
     public ResponseEntity<TokenOutputSimpleDto> findByToken(String tokenId) {
         TokenEntity tokenEntity = tokenRepository.findById(tokenId)
@@ -66,41 +65,36 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public ResponseEntity<String> save(UserEntity userEntity) {
-        if(userRepository.existsByEmail(userEntity.getEmail())){
+        if (userRepository.existsByEmail(userEntity.getEmail())) {
             throw new RuntimeException("Email already exists!");
         }
-        userEntity.setPassword(/*passwordEncoder.encode(*/userEntity.getPassword()/*)*/);
+        userEntity.setPassword(userEntity.getPassword());
 
-        if(!userEntity.getConfirmed()){
+        if (!userEntity.getConfirmed()) {
             createAndSendToken(userEntity, "confirmation");
         }
         userRepository.save(userEntity);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Cuenta creada, revisa tu email para confirmarla!");
+                .body("Account created, check your email to confirm!");
     }
 
     @Override
     public ResponseEntity<String> login(UserEntity userEntity) {
         UserEntity user = userRepository.findUserEntitiesByEmail(userEntity.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         if (!user.getConfirmed()) {
             createAndSendToken(user, "confirmation");
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("El usuario no está confirmado, un nuevo email de confirmación ha sido enviado.");
+                    .body("The user is not confirmed, a new confirmation email has been sent.");
         }
 
-        System.out.println(user.getPassword());
-        System.out.println(userEntity.getPassword());
-        System.out.println(passwordEncoder.matches(user.getPassword(), userEntity.getPassword()));
-        System.out.println(passwordEncoder.encode(userEntity.getPassword()));
-        if (!user.getPassword().equals(userEntity.getPassword())) {
+        if (!passwordEncoder.matches(userEntity.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Contraseña incorrecta");
+                    .body("Incorrect password");
         }
 
         String jwt = jwtUtil.generateToken(userEntity.getEmail());
-        System.out.println(jwt);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(jwt);
     }
@@ -117,61 +111,60 @@ public class TokenServiceImpl implements TokenService {
     @Transactional
     public ResponseEntity<String> confirmAccount(String token) {
         TokenEntity tokenEntity = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Token no válido"));
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
 
         UserEntity userEntity = tokenEntity.getUser();
 
-        // Verificar si el usuario ya está confirmado
         if (userEntity.getConfirmed()) {
-            throw new RuntimeException("La cuenta ya está confirmada");
+            throw new RuntimeException("Account already confirmed");
         }
 
-        // Establecer el estado de confirmación
         userEntity.setConfirmed(true);
-
-        // Eliminar el token de la base de datos
         tokenRepository.delete(tokenEntity);
-
-        // Guardar el usuario con el nuevo estado
         userRepository.save(userEntity);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Cuenta confirmada exitosamente!");
+                .body("Account successfully confirmed!");
     }
-
 
     @Override
     public ResponseEntity<String> requestConfirmationCode(String email) {
         UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
-                .orElseThrow(() -> new RuntimeException("El usuario no está registrado"));
+                .orElseThrow(() -> new RuntimeException("User is not registered"));
 
         if (userEntity.getConfirmed()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("El usuario ya está confirmado");
+                    .body("User is already confirmed");
         }
 
         createAndSendToken(userEntity, "confirmation");
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Se ha enviado un nuevo token de confirmación a tu correo");
+                .body("A new confirmation token has been sent to your email");
     }
 
     @Override
     public ResponseEntity<String> forgotPassword(String email) {
         UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
-                .orElseThrow(() -> new RuntimeException("El usuario no está registrado"));
+                .orElseThrow(() -> new RuntimeException("User is not registered"));
 
         createAndSendToken(userEntity, "password");
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Revisa tu correo para las instrucciones de restablecimiento de contraseña");
+                .body("Check your email for password reset instructions");
     }
 
     @Override
-    public ResponseEntity<String> validateToken(String token) {
-        TokenEntity tokenEntity = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Token no válido"));
+    public ResponseEntity<String> validateToken(String password) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (!userEntity.getPassword().equals(password)) {
+             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong password!");
+        }
+        userEntity.setPassword(password);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Token válido, puedes restablecer tu contraseña");
+                .body("Password correct!");
     }
 
     @Override
@@ -180,10 +173,11 @@ public class TokenServiceImpl implements TokenService {
         String email = authentication.getName();
         UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
         userEntity.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(userEntity);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Contraseña cambiada con éxito");
+                .body("Password successfully changed");
     }
 
     @Override
@@ -192,6 +186,7 @@ public class TokenServiceImpl implements TokenService {
         String email = authentication.getName();
         UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         return ResponseEntity.status(200)
                 .body(userOutputMapper.entityToOutputSimpleDto(userEntity));
     }
@@ -215,5 +210,4 @@ public class TokenServiceImpl implements TokenService {
             default -> throw new IllegalArgumentException("Unknown email type");
         }
     }
-
 }
