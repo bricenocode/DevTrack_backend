@@ -26,5 +26,6 @@ public class UserEntity {
     private String email;
     @NotBlank(message = "field password is required")
     private String password;
+    @Builder.Default
     private Boolean confirmed = false;
 }
