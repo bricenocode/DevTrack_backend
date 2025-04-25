@@ -26,7 +26,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<UserOutputSimpleDto> findMemberByEmail(String email) {
-        System.out.println(email);
         UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
                 .orElseThrow(() -> new RuntimeException(
                         "User with email " + email + " not found"));
