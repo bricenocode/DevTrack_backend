@@ -4,10 +4,9 @@ import com.devtrack.completedby.domain.entity.CompletedBy;
 import com.devtrack.notes.domain.entity.NoteEntity;
 import com.devtrack.projects.domain.entity.ProjectEntity;
 import com.devtrack.utils.enums.TaskStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -22,6 +21,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = "notes")
+@ToString(exclude = "notes")
 public class TaskEntity {
 
     @Id
@@ -30,7 +31,8 @@ public class TaskEntity {
 
     private String name;
     private String description;
-    private TaskStatus status;
+    @Builder.Default
+    private TaskStatus status = TaskStatus.pending;
 
     @DBRef
     private ProjectEntity project;
@@ -39,6 +41,8 @@ public class TaskEntity {
 
     @DBRef
     private List<NoteEntity> notes = new ArrayList<>();
-    private Instant createdAt;
-    private Instant updatedAt;
+    @Builder.Default
+    private Instant createdAt = Instant.now();
+    @Builder.Default
+    private Instant updatedAt = Instant.now();
 }

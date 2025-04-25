@@ -2,6 +2,7 @@ package com.devtrack.tasks.infraestructure.controller.dto.output;
 
 
 import com.devtrack.completedby.infraestructure.controller.dto.output.CompletedByOutputDto;
+import com.devtrack.notes.infraestructure.controller.dto.output.NoteOutputFullDto;
 import com.devtrack.notes.infraestructure.controller.dto.output.NoteOutputSimpleDto;
 import com.devtrack.projects.infraestructure.controller.dto.output.ProjectOutputSimpleDto;
 import com.devtrack.utils.enums.TaskStatus;
@@ -24,7 +25,7 @@ public class TaskOutputFullDto {
     private TaskStatus status;
     private Instant createdAt;
     private Instant updatedAt;
-    private ProjectOutputSimpleDto project;
+    private String project;
     private List<CompletedByOutputDto> completedBy;
-    private List<NoteOutputSimpleDto> notes;
+    private List<NoteOutputFullDto> notes;
 }

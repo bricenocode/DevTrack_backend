@@ -1,6 +1,7 @@
 package com.devtrack.tasks.application.impl;
 
 import com.devtrack.completedby.domain.entity.CompletedBy;
+import com.devtrack.completedby.domain.repository.CompletedByRepository;
 import com.devtrack.projects.domain.entity.ProjectEntity;
 import com.devtrack.projects.domain.repository.ProjectRepository;
 import com.devtrack.tasks.application.TaskService;
@@ -33,6 +34,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskInputMapper taskInputMapper;
     private final TaskOutputMapper taskOutputMapper;
     private final ProjectRepository projectRepository;
+    private final CompletedByRepository completedByRepository;
     private final UserRepository userRepository;
 
     @Override
@@ -43,14 +45,8 @@ public class TaskServiceImpl implements TaskService {
         ProjectEntity projectEntity = this.projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException(
                         "Project not found"));
-
+        
         taskEntity.setProject(projectEntity);
-        taskEntity.setUpdatedAt(Instant.now());
-        taskEntity.setCreatedAt(Instant.now());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getPrincipal().toString();
-        UserEntity user = userRepository.findUserEntitiesByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
         TaskEntity taskSaved = taskRepository.save(taskEntity);
         projectEntity.getTasks().add(taskSaved);
         this.projectRepository.save(projectEntity);
@@ -145,7 +141,7 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new RuntimeException(
                         "Task not found"));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getPrincipal().toString();
+        String email = authentication.getName();
         UserEntity user = userRepository.findUserEntitiesByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -160,7 +156,8 @@ public class TaskServiceImpl implements TaskService {
                 .user(user)
                 .status(status)
                 .build();
-        taskEntity.getCompletedBy().add(completedBy);
+        CompletedBy completedBySaved = completedByRepository.save(completedBy);
+        taskEntity.getCompletedBy().add(completedBySaved);
         taskRepository.save(taskEntity);
         return ResponseEntity.status(HttpStatus.OK).body("Task status updated!");
     }
