@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CompletedByOutputDto {
+    private String _id;
     private UserOutputSimpleDto user;
     private TaskStatus status;
 }
