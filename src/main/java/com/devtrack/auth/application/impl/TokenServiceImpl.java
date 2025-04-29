@@ -88,8 +88,7 @@ public class TokenServiceImpl implements TokenService {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("The user is not confirmed, a new confirmation email has been sent.");
         }
-
-        if (!passwordEncoder.matches(userEntity.getPassword(), user.getPassword())) {
+        if (!userEntity.getPassword().equals(user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Incorrect password");
         }

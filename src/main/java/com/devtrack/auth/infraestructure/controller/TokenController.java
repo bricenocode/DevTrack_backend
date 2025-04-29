@@ -79,9 +79,6 @@ public class TokenController {
             TokenInputChangePasswordDto tokenInputChangePasswordDto
 
     ){
-        System.out.println(tokenInputChangePasswordDto.getCurrentPassword());
-        System.out.println(tokenInputChangePasswordDto.getPassword());
-        System.out.println(tokenInputChangePasswordDto.getPasswordConfirmation());
         if(!tokenInputChangePasswordDto.getPassword()
                 .equals(tokenInputChangePasswordDto.getPasswordConfirmation())){
             throw new RuntimeException("Passwords do not match");
