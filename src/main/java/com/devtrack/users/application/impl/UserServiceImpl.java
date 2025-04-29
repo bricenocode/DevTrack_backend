@@ -3,7 +3,6 @@ package com.devtrack.users.application.impl;
 import com.devtrack.projects.domain.entity.ProjectEntity;
 import com.devtrack.projects.domain.repository.ProjectRepository;
 import com.devtrack.users.application.UserService;
-import com.devtrack.users.application.mapper.input.UserInputMapper;
 import com.devtrack.users.application.mapper.output.UserOutputMapper;
 import com.devtrack.users.domain.entity.UserEntity;
 import com.devtrack.users.domain.repository.UserRepository;
@@ -20,9 +19,10 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserInputMapper userInputMapper;
     private final UserOutputMapper userOutputMapper;
     private final ProjectRepository projectRepository;
+
+
 
     @Override
     public ResponseEntity<UserOutputSimpleDto> findMemberByEmail(String email) {
@@ -78,10 +78,8 @@ public class UserServiceImpl implements UserService {
         ProjectEntity project = this.projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(
                         "Project with id " + id + " not found"));
-        List<UserOutputSimpleDto> team = project.getTeam()
-                .stream()
-                .map(this.userOutputMapper::entityToOutputSimpleDto)
-                .toList();
+        List<UserOutputSimpleDto> team = userOutputMapper
+                .listEntityToOutputSimpleDto(project.getTeam());
         return ResponseEntity.status(HttpStatus.OK).body(team);
     }
 }

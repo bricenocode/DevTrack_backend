@@ -11,11 +11,11 @@ public interface TokenService {
     ResponseEntity<TokenOutputSimpleDto> findByToken(String tokenId);
     ResponseEntity<String> save(UserEntity userEntity);
     ResponseEntity<String> login(UserEntity userEntity);
-    ResponseEntity<String> delete(String tokenId);
     ResponseEntity<String> confirmAccount(String token);
     ResponseEntity<String> requestConfirmationCode(String email);
     ResponseEntity<String> forgotPassword(String email);
-    ResponseEntity<String> validateToken(String password);
-    ResponseEntity<String> updatePasswordWithToken(String newPassword);
+    ResponseEntity<String> validateToken(String token);
+    ResponseEntity<String> updatePasswordWithToken(String token, String newPassword);
     ResponseEntity<UserOutputSimpleDto> user();
+    ResponseEntity<String> updateProfile(UserEntity userEntity) throws Exception;
 }

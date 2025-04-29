@@ -1,10 +1,10 @@
 package com.devtrack.auth.infraestructure.controller;
 
 import com.devtrack.auth.application.TokenService;
-import com.devtrack.auth.infraestructure.controller.dto.input.TokenInputChangePasswordDto;
-import com.devtrack.auth.infraestructure.controller.dto.input.TokenInputNameDto;
-import com.devtrack.auth.infraestructure.controller.dto.input.TokenInputPasswordDto;
+import com.devtrack.auth.application.mapper.input.TokenInputMapper;
+import com.devtrack.auth.infraestructure.controller.dto.input.*;
 import com.devtrack.users.application.mapper.input.UserInputMapper;
+import com.devtrack.users.infraestructure.controller.dto.input.UserInputEmailDto;
 import com.devtrack.users.infraestructure.controller.dto.input.UserInputLoginDto;
 import com.devtrack.users.infraestructure.controller.dto.input.UserInputSimpleDto;
 import com.devtrack.users.infraestructure.controller.dto.output.UserOutputSimpleDto;
@@ -20,6 +20,7 @@ public class TokenController {
 
     private final TokenService tokenService;
     private final UserInputMapper userInputMapper;
+    private final TokenInputMapper tokenInputMapper;
 
     @PostMapping("/create-account")
     public ResponseEntity<String> createAccount(
@@ -60,21 +61,23 @@ public class TokenController {
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(
             @RequestBody
-            String email
+            UserInputEmailDto userInputEmailDto
     ){
-        return tokenService.forgotPassword(email);
+        return tokenService.forgotPassword(userInputEmailDto.getEmail());
     }
 
-    @PostMapping("/check-password")
+    @PostMapping("/validate-password")
     public ResponseEntity<String> validatePassword(
             @RequestBody
-            TokenInputPasswordDto tokenInputPasswordDto
+            TokenInputDto tokenInputDto
     ){
-        return tokenService.validateToken(tokenInputPasswordDto.getPassword());
+        return tokenService.validateToken(tokenInputDto.getToken());
     }
 
-    @PutMapping("/update-password")
+    @PutMapping("/update-password/{token}")
     public ResponseEntity<String> updatePasswordWithToken(
+            @PathVariable
+            String token,
             @RequestBody
             TokenInputChangePasswordDto tokenInputChangePasswordDto
 
@@ -83,7 +86,7 @@ public class TokenController {
                 .equals(tokenInputChangePasswordDto.getPasswordConfirmation())){
             throw new RuntimeException("Passwords do not match");
         }
-        return tokenService.updatePasswordWithToken(tokenInputChangePasswordDto.getPassword());
+        return tokenService.updatePasswordWithToken(token, tokenInputChangePasswordDto.getPassword());
     }
 
     @GetMapping("/user")
@@ -91,4 +94,10 @@ public class TokenController {
         return tokenService.user();
     }
 
+    @PutMapping("/profile")
+    public ResponseEntity<String> profile(
+            @RequestBody
+            TokenInputProfileDto tokenInputProfileDto) throws Exception {
+        return this.tokenService.updateProfile(tokenInputMapper.inputProfileDtoToUserEntity(tokenInputProfileDto));
+    }
 }

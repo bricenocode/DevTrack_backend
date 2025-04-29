@@ -27,9 +27,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -82,29 +82,18 @@ public class TokenServiceImpl implements TokenService {
     public ResponseEntity<String> login(UserEntity userEntity) {
         UserEntity user = userRepository.findUserEntitiesByEmail(userEntity.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
         if (!user.getConfirmed()) {
             createAndSendToken(user, "confirmation");
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("The user is not confirmed, a new confirmation email has been sent.");
         }
         if (!userEntity.getPassword().equals(user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Incorrect password");
+            throw new RuntimeException("Incorrect password");
         }
 
         String jwt = jwtUtil.generateToken(userEntity.getEmail());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(jwt);
-    }
-
-    @Override
-    public ResponseEntity<String> delete(String tokenId) {
-        TokenEntity tokenEntity = tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new RuntimeException("Token not found!"));
-        tokenRepository.delete(tokenEntity);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("Token deleted!");
     }
 
     @Transactional
@@ -152,27 +141,18 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public ResponseEntity<String> validateToken(String password) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!userEntity.getPassword().equals(password)) {
-             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong password!");
-        }
-        userEntity.setPassword(password);
+    public ResponseEntity<String> validateToken(String token) {
+        TokenEntity tokenEntity = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Incorrect token"));
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Password correct!");
+                .body("Ok! Update your password");
     }
 
     @Override
-    public ResponseEntity<String> updatePasswordWithToken(String newPassword) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+    public ResponseEntity<String> updatePasswordWithToken(String token, String newPassword) {
+       TokenEntity tokenEntity = tokenRepository.findByToken(token)
+               .orElseThrow(() -> new RuntimeException("Token not found"));
+        UserEntity userEntity = tokenEntity.getUser();
         userEntity.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(userEntity);
         return ResponseEntity.status(HttpStatus.OK)
@@ -208,5 +188,27 @@ public class TokenServiceImpl implements TokenService {
             case "password" -> emailService.sendPasswordResetToken(emailEntity);
             default -> throw new IllegalArgumentException("Unknown email type");
         }
+    }
+
+    @Override
+    public ResponseEntity<String> updateProfile(UserEntity userEntity) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserEntity user = userRepository.findUserEntitiesByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println(userEntity.getName());
+        System.out.println(userEntity.getEmail());
+
+        if(userRepository.existsByEmail(email) && !userEntity.getEmail().equals(email)) {
+            throw new Exception("Email it's already assigned");
+        }
+
+        Optional.ofNullable(userEntity.getName())
+                .ifPresent(user::setName);
+        Optional.ofNullable(userEntity.getEmail())
+                .ifPresent(user::setEmail);
+        userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("User updated correctly!");
     }
 }

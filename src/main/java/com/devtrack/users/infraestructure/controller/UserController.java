@@ -1,6 +1,8 @@
 package com.devtrack.users.infraestructure.controller;
 
 import com.devtrack.users.application.UserService;
+import com.devtrack.users.infraestructure.controller.dto.input.UserInputEmailDto;
+import com.devtrack.users.infraestructure.controller.dto.input.UserInputIdDto;
 import com.devtrack.users.infraestructure.controller.dto.output.UserOutputSimpleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,22 +18,23 @@ public class UserController {
     private final UserService userService;
 
     //Connected with ProjectController
-    @GetMapping(path = "/projects/{projectId}/team/find")
+    @PostMapping(path = "/projects/{projectId}/team/find")
     ResponseEntity<UserOutputSimpleDto> findMemberByEmail(
             @PathVariable
             String projectId,
             @RequestBody
-            String email){
-        return this.userService.findMemberByEmail(email);
+            UserInputEmailDto userInputEmailDto) {
+        return this.userService.findMemberByEmail(userInputEmailDto.getEmail());
     }
 
-    @PutMapping(path = "/projects/{projectId}/team")
+    @PostMapping(path = "/projects/{projectId}/team")
     ResponseEntity<String> addMemberById(
             @PathVariable
             String projectId,
             @RequestBody
-            String id ){
-        return this.userService.addMemberById(id, projectId);
+            UserInputIdDto userInputIdDto) {
+        System.out.println(userInputIdDto.getId());
+        return this.userService.addMemberById(userInputIdDto.getId(), projectId);
     }
 
     @DeleteMapping(path = "/projects/{projectId}/team/{userId}")

@@ -6,6 +6,8 @@ import com.devtrack.users.infraestructure.controller.dto.output.UserOutputSimple
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface UserOutputMapper {
 
@@ -13,4 +15,5 @@ public interface UserOutputMapper {
 
     UserOutputSimpleDto entityToOutputSimpleDto(UserEntity entity);
     UserOutputLoginDto entityToOutputLoginDto(UserEntity entity);
+    List<UserOutputSimpleDto> listEntityToOutputSimpleDto(List<UserEntity> entities);
 }

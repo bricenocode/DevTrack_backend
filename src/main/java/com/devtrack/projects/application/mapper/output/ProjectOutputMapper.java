@@ -15,6 +15,7 @@ public interface ProjectOutputMapper {
 
     UserOutputSimpleDto userToUserOutputDto(UserEntity user);
     List<UserOutputSimpleDto> usersToUserOutputDtos(List<UserEntity> users);
+    List<ProjectOutputFullDto> projectsToProjectFullDtos(List<ProjectEntity> projects);
 
     TaskOutputSimpleDto taskToTaskOutputSimpleDto(TaskEntity task);
     List<TaskOutputSimpleDto> tasksToTaskOutputSimpleDtos(List<TaskEntity> tasks);

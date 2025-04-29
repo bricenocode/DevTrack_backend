@@ -64,11 +64,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectOutputFullDto> getAllProjects() {
-        return  projectRepository.findAll()
-                .stream()
-                .map(projectOutputMapper::entityToOutputFullDto)
-                .toList();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserEntity user = userRepository.findUserEntitiesByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        List<ProjectEntity> projects = projectRepository
+                .findProjectsWhereUserIsManagerOrTeam(user.get_id());
+        return projectOutputMapper.projectsToProjectFullDtos(projects);
     }
+
 
     @Override
     public  ProjectOutputFullDto getProjectById(String id) {
