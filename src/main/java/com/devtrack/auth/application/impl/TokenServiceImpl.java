@@ -211,4 +211,18 @@ public class TokenServiceImpl implements TokenService {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("User updated correctly!");
     }
+
+    @Override
+    public ResponseEntity<String> checkPassword(String password) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserEntity user = userRepository.findUserEntitiesByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        boolean matches = password.equals(user.getPassword());
+        if(!matches) {
+            throw new RuntimeException("Password is not correct");
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Correct password");
+    }
 }

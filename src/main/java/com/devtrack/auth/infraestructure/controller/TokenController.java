@@ -100,4 +100,12 @@ public class TokenController {
             TokenInputProfileDto tokenInputProfileDto) throws Exception {
         return this.tokenService.updateProfile(tokenInputMapper.inputProfileDtoToUserEntity(tokenInputProfileDto));
     }
+
+    @PostMapping("/check-password")
+    public ResponseEntity<String> checkPassword(
+            @RequestBody
+            TokenInputPasswordDto passwordDto
+    ){
+        return tokenService.checkPassword(passwordDto.getPassword());
+    }
 }

@@ -56,7 +56,6 @@ public class WebSecurityConfig {
 
 
             );
-        //Add the JWT Token filter before the UsernamePasswordAuthenticationFilter
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
