@@ -68,7 +68,7 @@ public class TokenServiceImpl implements TokenService {
         if (userRepository.existsByEmail(userEntity.getEmail())) {
             throw new RuntimeException("Email already exists!");
         }
-        userEntity.setPassword(userEntity.getPassword());
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
 
         if (!userEntity.getConfirmed()) {
             createAndSendToken(userEntity, "confirmation");
@@ -87,7 +87,7 @@ public class TokenServiceImpl implements TokenService {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("The user is not confirmed, a new confirmation email has been sent.");
         }
-        if (!userEntity.getPassword().equals(user.getPassword())) {
+        if (!passwordEncoder.matches(userEntity.getPassword(), user.getPassword())) {
             throw new RuntimeException("Incorrect password");
         }
 
@@ -196,8 +196,6 @@ public class TokenServiceImpl implements TokenService {
         String email = authentication.getName();
         UserEntity user = userRepository.findUserEntitiesByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        System.out.println(userEntity.getName());
-        System.out.println(userEntity.getEmail());
 
         if(userRepository.existsByEmail(email) && !userEntity.getEmail().equals(email)) {
             throw new Exception("Email it's already assigned");
@@ -218,7 +216,7 @@ public class TokenServiceImpl implements TokenService {
         String email = authentication.getName();
         UserEntity user = userRepository.findUserEntitiesByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        boolean matches = password.equals(user.getPassword());
+        boolean matches = passwordEncoder.matches(password, user.getPassword());
         if(!matches) {
             throw new RuntimeException("Password is not correct");
         }
