@@ -1,6 +1,7 @@
 package com.devtrack.users.infraestructure.controller;
 
 import com.devtrack.users.application.UserService;
+import com.devtrack.users.domain.entity.UserEntity;
 import com.devtrack.users.infraestructure.controller.dto.input.UserInputEmailDto;
 import com.devtrack.users.infraestructure.controller.dto.input.UserInputIdDto;
 import com.devtrack.users.infraestructure.controller.dto.output.UserOutputSimpleDto;
@@ -16,6 +17,19 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping("/users")
+    public ResponseEntity<List<String>> searchUsers(@RequestParam String query) {
+        // Llama a tu servicio de aplicación para buscar usuarios
+        List<UserEntity> users = userService.findUsersByEmail(query);
+
+        // Mapea las entidades de usuario a solo sus emails
+        List<String> userEmails = users.stream()
+                .map(UserEntity::getEmail)
+                .toList();
+
+        return ResponseEntity.ok(userEmails);
+    }
 
     //Connected with ProjectController
     @PostMapping(path = "/projects/{projectId}/team/find")

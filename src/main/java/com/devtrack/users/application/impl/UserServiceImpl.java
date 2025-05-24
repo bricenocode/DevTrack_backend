@@ -22,8 +22,6 @@ public class UserServiceImpl implements UserService {
     private final UserOutputMapper userOutputMapper;
     private final ProjectRepository projectRepository;
 
-
-
     @Override
     public ResponseEntity<UserOutputSimpleDto> findMemberByEmail(String email) {
         UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
@@ -33,9 +31,14 @@ public class UserServiceImpl implements UserService {
                 .body(userOutputMapper.entityToOutputSimpleDto(userEntity));
     }
 
+    // Nuevo método para buscar usuarios por email (contiene la query)
+    @Override
+    public List<UserEntity> findUsersByEmail(String query) {
+        return userRepository.findUserEntitiesByEmailContainingIgnoreCase(query);
+    }
+
     @Override
     public ResponseEntity<String> addMemberById(String memberId, String projectId) {
-
         UserEntity member = this.userRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException(
                         "User with id " + memberId + " not found"));
@@ -56,7 +59,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> removeMemberById(String memberId, String projectId) {
-
         UserEntity member = this.userRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException(
                         "User with id " + memberId + " not found"));
