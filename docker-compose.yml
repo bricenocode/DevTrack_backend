@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    container_name: my-spring-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
+      spring.data.mongodb.database: DevTrack
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE}
+      FRONTEND_URL: ${FRONTEND_URL}
+      SPRING_SECURITY_USER_NAME: ${SPRING_SECURITY_USER_NAME}
+      SPRING_SECURITY_USER_PASSWORD: ${SPRING_SECURITY_USER_PASSWORD}
+    env_file:
+      - ./.env
+    networks:
+      - mynetwork 
+networks:
+  mynetwork:
+    driver: bridge
