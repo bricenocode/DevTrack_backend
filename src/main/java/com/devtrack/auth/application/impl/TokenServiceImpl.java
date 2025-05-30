@@ -80,18 +80,28 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public ResponseEntity<String> login(UserEntity userEntity) {
-        UserEntity user = userRepository.findUserEntitiesByEmail(userEntity.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Optional<UserEntity> optionalUser = userRepository.findUserEntitiesByEmail(userEntity.getEmail());
+
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("User not found");
+        }
+
+        UserEntity user = optionalUser.get();
+
         if (!user.getConfirmed()) {
             createAndSendToken(user, "confirmation");
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("The user is not confirmed, a new confirmation email has been sent.");
         }
+
         if (!passwordEncoder.matches(userEntity.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Incorrect password");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Incorrect password");
         }
 
-        String jwt = jwtUtil.generateToken(userEntity.getEmail());
+
+        String jwt = jwtUtil.generateToken(user.getEmail());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(jwt);
     }
