@@ -6,7 +6,7 @@ Para lograrlo, elegí **Spring Boot** como mi framework principal, lo que me per
 
 ## Estructura del Proyecto
 
-Aquí te explico cómo está organizado el repositorio para que te sea fácil navegar por él:
+![image](https://github.com/user-attachments/assets/c579b543-cd1a-451b-9ee3-8e8365c26f75)
 
 * `.mvn/wrapper`: Contiene los scripts de **Maven Wrapper**, que son útiles para garantizar que cualquier persona que clone el proyecto pueda construirlo sin problemas, incluso si no tiene Maven instalado globalmente.
 * `src/main`: Este es el directorio principal donde reside todo el **código fuente** de la aplicación Spring Boot. Aquí encontrarás la lógica de negocio, los controladores REST, la configuración, etc.
