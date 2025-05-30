@@ -8,6 +8,278 @@ Para lograrlo, elegí **Spring Boot** como mi framework principal, lo que me per
 
 ![image](https://github.com/user-attachments/assets/c579b543-cd1a-451b-9ee3-8e8365c26f75)
 
+## Arbol
+
+```
+├───src
+│   └───main
+│       ├───java
+│       │   └───com
+│       │       └───devtrack
+│       │           ├───auth
+│       │           │   ├───application
+│       │           │   │   ├───impl
+│       │           │   │   └───mapper
+│       │           │   │       ├───input
+│       │           │   │       └───output
+│       │           │   ├───domain
+│       │           │   │   ├───entity
+│       │           │   │   └───repository
+│       │           │   └───infraestructure
+│       │           │       └───controller
+│       │           │           └───dto
+│       │           │               ├───input
+│       │           │               └───output
+│       │           ├───chat
+│       │           │   ├───application
+│       │           │   │   ├───impl
+│       │           │   │   └───mapper
+│       │           │   │       ├───input
+│       │           │   │       └───output
+│       │           │   ├───domain
+│       │           │   │   ├───entity
+│       │           │   │   └───repository
+│       │           │   └───infraestructure
+│       │           │       └───controller
+│       │           │           └───dto
+│       │           │               ├───input
+│       │           │               └───output
+│       │           ├───completedby
+│       │           │   ├───application
+│       │           │   │   └───mapper
+│       │           │   │       ├───input
+│       │           │   │       └───output
+│       │           │   ├───domain
+│       │           │   │   ├───entity
+│       │           │   │   └───repository
+│       │           │   └───infraestructure
+│       │           │       └───controller
+│       │           │           └───dto
+│       │           │               ├───input
+│       │           │               └───output
+│       │           ├───configuration
+│       │           ├───email
+│       │           │   ├───application
+│       │           │   │   └───impl
+│       │           │   └───domain
+│       │           ├───notes
+│       │           │   ├───application
+│       │           │   │   ├───impl
+│       │           │   │   └───mapper
+│       │           │   │       ├───input
+│       │           │   │       └───output
+│       │           │   ├───domain
+│       │           │   │   ├───entity
+│       │           │   │   └───repository
+│       │           │   └───infraestructure
+│       │           │       └───controller
+│       │           │           └───dto
+│       │           │               ├───input
+│       │           │               └───output
+│       │           ├───projects
+│       │           │   ├───application
+│       │           │   │   ├───impl
+│       │           │   │   └───mapper
+│       │           │   │       ├───input
+│       │           │   │       └───output
+│       │           │   ├───domain
+│       │           │   │   ├───entity
+│       │           │   │   └───repository
+│       │           │   └───infraestructure
+│       │           │       └───controller
+│       │           │           └───dto
+│       │           │               ├───input
+│       │           │               └───output
+│       │           ├───tasks
+│       │           │   ├───application
+│       │           │   │   ├───impl
+│       │           │   │   └───mapper
+│       │           │   │       ├───input
+│       │           │   │       └───output
+│       │           │   ├───domain
+│       │           │   │   ├───entity
+│       │           │   │   └───repository
+│       │           │   └───infraestructure
+│       │           │       └───controller
+│       │           │           └───dto
+│       │           │               ├───input
+│       │           │               └───output
+│       │           ├───users
+│       │           │   ├───application
+│       │           │   │   ├───impl
+│       │           │   │   └───mapper
+│       │           │   │       ├───input
+│       │           │   │       └───output
+│       │           │   ├───domain
+│       │           │   │   ├───entity
+│       │           │   │   └───repository
+│       │           │   └───infraestructure
+│       │           │       └───controller
+│       │           │           └───dto
+│       │           │               ├───input
+│       │           │               └───output
+│       │           └───utils
+│       │               ├───enums
+│       │               └───exceptions
+│       └───resources
+│           ├───static
+│           └───templates
+└───target
+    ├───classes
+    │   └───com
+    │       └───devtrack
+    │           ├───auth
+    │           │   ├───application
+    │           │   │   ├───impl
+    │           │   │   └───mapper
+    │           │   │       ├───input
+    │           │   │       └───output
+    │           │   ├───domain
+    │           │   │   ├───entity
+    │           │   │   └───repository
+    │           │   └───infraestructure
+    │           │       └───controller
+    │           │           └───dto
+    │           │               ├───input
+    │           │               └───output
+    │           ├───chat
+    │           │   ├───application
+    │           │   │   ├───impl
+    │           │   │   └───mapper
+    │           │   │       ├───input
+    │           │   │       └───output
+    │           │   ├───domain
+    │           │   │   ├───entity
+    │           │   │   └───repository
+    │           │   └───infraestructure
+    │           │       └───controller
+    │           │           └───dto
+    │           │               ├───input
+    │           │               └───output
+    │           ├───completedby
+    │           │   ├───application
+    │           │   │   └───mapper
+    │           │   │       ├───input
+    │           │   │       └───output
+    │           │   ├───domain
+    │           │   │   ├───entity
+    │           │   │   └───repository
+    │           │   └───infraestructure
+    │           │       └───controller
+    │           │           └───dto
+    │           │               ├───input
+    │           │               └───output
+    │           ├───configuration
+    │           ├───email
+    │           │   ├───application
+    │           │   │   └───impl
+    │           │   └───domain
+    │           ├───notes
+    │           │   ├───application
+    │           │   │   ├───impl
+    │           │   │   └───mapper
+    │           │   │       ├───input
+    │           │   │       └───output
+    │           │   ├───domain
+    │           │   │   ├───entity
+    │           │   │   └───repository
+    │           │   └───infraestructure
+    │           │       └───controller
+    │           │           └───dto
+    │           │               ├───input
+    │           │               └───output
+    │           ├───projects
+    │           │   ├───application
+    │           │   │   ├───impl
+    │           │   │   └───mapper
+    │           │   │       ├───input
+    │           │   │       └───output
+    │           │   ├───domain
+    │           │   │   ├───entity
+    │           │   │   └───repository
+    │           │   └───infraestructure
+    │           │       └───controller
+    │           │           └───dto
+    │           │               ├───input
+    │           │               └───output
+    │           ├───tasks
+    │           │   ├───application
+    │           │   │   ├───impl
+    │           │   │   └───mapper
+    │           │   │       ├───input
+    │           │   │       └───output
+    │           │   ├───domain
+    │           │   │   ├───entity
+    │           │   │   └───repository
+    │           │   └───infraestructure
+    │           │       └───controller
+    │           │           └───dto
+    │           │               ├───input
+    │           │               └───output
+    │           ├───users
+    │           │   ├───application
+    │           │   │   ├───impl
+    │           │   │   └───mapper
+    │           │   │       ├───input
+    │           │   │       └───output
+    │           │   ├───domain
+    │           │   │   ├───entity
+    │           │   │   └───repository
+    │           │   └───infraestructure
+    │           │       └───controller
+    │           │           └───dto
+    │           │               ├───input
+    │           │               └───output
+    │           └───utils
+    │               ├───enums
+    │               └───exceptions
+    ├───generated-sources
+    │   └───annotations
+    │       └───com
+    │           └───devtrack
+    │               ├───auth
+    │               │   └───application
+    │               │       └───mapper
+    │               │           ├───input
+    │               │           └───output
+    │               ├───chat
+    │               │   └───application
+    │               │       └───mapper
+    │               │           ├───input
+    │               │           └───output
+    │               ├───completedby
+    │               │   └───application
+    │               │       └───mapper
+    │               │           ├───input
+    │               │           └───output
+    │               ├───notes
+    │               │   └───application
+    │               │       └───mapper
+    │               │           ├───input
+    │               │           └───output
+    │               ├───projects
+    │               │   └───application
+    │               │       └───mapper
+    │               │           ├───input
+    │               │           └───output
+    │               ├───tasks
+    │               │   └───application
+    │               │       └───mapper
+    │               │           ├───input
+    │               │           └───output
+    │               └───users
+    │                   └───application
+    │                       └───mapper
+    │                           ├───input
+    │                           └───output
+    ├───maven-archiver
+    └───maven-status
+        └───maven-compiler-plugin
+            └───compile
+                └───default-compile
+
+```
+
 * `.mvn/wrapper`: Contiene los scripts de **Maven Wrapper**, que son útiles para garantizar que cualquier persona que clone el proyecto pueda construirlo sin problemas, incluso si no tiene Maven instalado globalmente.
 * `src/main`: Este es el directorio principal donde reside todo el **código fuente** de la aplicación Spring Boot. Aquí encontrarás la lógica de negocio, los controladores REST, la configuración, etc.
 * `.gitattributes`: Un archivo de configuración de Git que ayuda a definir atributos por ruta.
