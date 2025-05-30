@@ -3,7 +3,6 @@ package com.devtrack.auth.application;
 import com.devtrack.auth.infraestructure.controller.dto.output.TokenOutputSimpleDto;
 import com.devtrack.users.domain.entity.UserEntity;
 import com.devtrack.users.infraestructure.controller.dto.output.UserOutputSimpleDto;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

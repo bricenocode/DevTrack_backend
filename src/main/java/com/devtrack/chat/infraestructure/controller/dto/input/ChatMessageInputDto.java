@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatMessageInputDto {
     @NotBlank(message = "El remitente no puede estar vacío")
-    private String sender; // El remitente puede venir del token o del body, según tu lógica de seguridad
+    private String sender;
     @NotBlank(message = "El destinatario no puede estar vacío")
     private String recipient;
     @NotBlank(message = "El contenido del mensaje no puede estar vacío")

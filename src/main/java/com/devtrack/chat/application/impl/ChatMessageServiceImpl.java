@@ -6,11 +6,10 @@ import com.devtrack.chat.domain.repository.ChatMessageRepository;
 import com.devtrack.chat.infraestructure.controller.dto.output.RecentConversationOutputDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Importar para transacciones
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,8 +55,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             if (!recentConversationsMap.containsKey(participantEmail)) {
                 // Para la primera vez que encontramos un mensaje para esta conversación,
                 // o si el mensaje actual es más reciente que el ya registrado para este participante.
-                // Aquí, el `hasNewMessages` se calculará basándose en el conteo de no leídos.
-
+                // Aquí, el `hasNewMessages` se calculará basándose en el conteo de no leídos.W
                 // Contar mensajes no leídos donde el usuario actual es el destinatario y el otro participante es el remitente
                 long unreadCountForParticipant = chatMessageRepository.findByRecipientAndSenderAndIsReadFalse(userEmail, participantEmail).size();
 

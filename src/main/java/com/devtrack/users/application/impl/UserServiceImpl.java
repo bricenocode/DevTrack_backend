@@ -10,6 +10,7 @@ import com.devtrack.users.infraestructure.controller.dto.output.UserOutputSimple
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +31,7 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userOutputMapper.entityToOutputSimpleDto(userEntity));
     }
-
-    // Nuevo método para buscar usuarios por email (contiene la query)
+    
     @Override
     public List<UserEntity> findUsersByEmail(String query) {
         return userRepository.findUserEntitiesByEmailContainingIgnoreCase(query);
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
                         "Project with id " + projectId + " not found"));
 
         if(!project.getTeam().contains(member))
-            throw new RuntimeException("User with id " + memberId + " does not exist on team");
+            throw new UsernameNotFoundException("User with id " + memberId + " does not exist on team");
 
         project.getTeam().remove(member);
         this.projectRepository.save(project);
