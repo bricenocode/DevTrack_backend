@@ -16,6 +16,7 @@ public interface TokenService {
     ResponseEntity<String> forgotPassword(String email);
     ResponseEntity<String> validateToken(String token);
     ResponseEntity<String> updatePasswordWithToken(String token, String newPassword);
+    ResponseEntity<String> updatePassword(String newPassword);
     ResponseEntity<UserOutputSimpleDto> user();
     ResponseEntity<String> updateProfile(UserEntity userEntity) throws Exception;
     ResponseEntity<String> checkPassword(String password);

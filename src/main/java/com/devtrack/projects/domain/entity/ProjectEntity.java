@@ -28,7 +28,7 @@ public class ProjectEntity {
     private String clientName;
     private String description;
 
-    @DBRef(lazy = false)
+    @DBRef(lazy = true)
     @Builder.Default
     private List<TaskEntity> tasks = new ArrayList<>();
 

@@ -160,6 +160,19 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public ResponseEntity<String> updatePassword(String newPassword) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserEntity userEntity = userRepository.findUserEntitiesByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        userEntity.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(userEntity);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Password successfully changed");
+    }
+
+
+    @Override
     public ResponseEntity<UserOutputSimpleDto> user() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();

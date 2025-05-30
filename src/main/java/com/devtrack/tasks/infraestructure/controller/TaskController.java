@@ -63,6 +63,7 @@ public class TaskController {
             String projectId,
             @PathVariable
             String taskId){
+        System.out.println(projectId);
      return this.taskService.removeTask(projectId, taskId);
     }
 

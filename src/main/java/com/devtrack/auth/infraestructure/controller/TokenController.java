@@ -89,6 +89,19 @@ public class TokenController {
         return tokenService.updatePasswordWithToken(token, tokenInputChangePasswordDto.getPassword());
     }
 
+    @PutMapping("/update-password")
+    public ResponseEntity<String> updatePassword(
+            @RequestBody
+            TokenInputChangePasswordDto tokenInputChangePasswordDto
+
+    ){
+        if(!tokenInputChangePasswordDto.getPassword()
+                .equals(tokenInputChangePasswordDto.getPasswordConfirmation())){
+            throw new RuntimeException("Passwords do not match");
+        }
+        return tokenService.updatePassword(tokenInputChangePasswordDto.getPassword());
+    }
+
     @GetMapping("/user")
     public ResponseEntity<UserOutputSimpleDto> user(){
         return tokenService.user();

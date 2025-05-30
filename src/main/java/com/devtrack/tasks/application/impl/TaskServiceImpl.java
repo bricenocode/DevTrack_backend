@@ -125,10 +125,12 @@ public class TaskServiceImpl implements TaskService {
             );
         }
 
-
-        projectEntity.getTasks().remove(taskEntity);
+       projectEntity.getTasks().remove(taskEntity);
+        System.out.println("entra por aqui");
         this.projectRepository.save(projectEntity);
+        System.out.println("despues de save");
         this.taskRepository.delete(taskEntity);
+        System.out.println("despues de deletr");
         return ResponseEntity.status(HttpStatus.OK).body("Task removed!");
     }
 
